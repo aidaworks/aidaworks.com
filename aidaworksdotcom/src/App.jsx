@@ -33,6 +33,11 @@ const twinkle = keyframes`
   50% { opacity: 1; }
 `;
 
+const spin = keyframes`
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+`;
+
 // Theme
 let theme = createTheme({
     palette: {
@@ -43,7 +48,12 @@ let theme = createTheme({
         },
     },
     typography: {
-        fontFamily: ['Roboto', 'system-ui', 'sans-serif'].join(','),
+        fontFamily: [
+            'Segoe UI',
+            'Roboto',
+            'system-ui',
+            'sans-serif',
+        ].join(','),
     },
 });
 
@@ -67,7 +77,7 @@ const AnimatedBackground = styled(Box)(({ isHovered }) => ({
     background: '#191919',
     overflow: 'hidden',
     transition: 'background 0.5s ease-in-out',
-    backgroundColor: isHovered ? '#262625' : '#191919',
+    backgroundColor: isHovered ? '#010101' : '#010101',
 }));
 
 const StarLayer = styled(Box)(({ depth = 1, color = 'white', isHovered = false }) => ({
@@ -95,6 +105,52 @@ const StarLayer = styled(Box)(({ depth = 1, color = 'white', isHovered = false }
         filter: isHovered ? 'brightness(1.3)' : 'none',
     }
 }));
+
+const LoadingOverlay = styled(Box)({
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backdropFilter: 'blur(5px)',
+    zIndex: 10,
+});
+
+const SpinningTextContainer = styled(Box)({
+    position: 'relative',
+    width: '300px',
+    height: '300px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+});
+
+const RotatingCircle = styled(Box)({
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    animation: `${spin} 10s linear infinite`,
+});
+
+const AISymbol = styled(Typography)({
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    fontSize: '3rem',
+    fontWeight: 'bold',
+    color: '#000',
+    fontFamily: 'Segoe UI, sans-serif',
+    zIndex: 2,
+    userSelect: 'none',
+    pointerEvents: 'none',
+});
 
 const ContentWrapper = styled(Box)({
     position: 'fixed',
@@ -124,22 +180,39 @@ const StyledCard = styled(Card)(({ theme }) => ({
     },
 }));
 
-const LoadingOverlay = styled(Box)({
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    backdropFilter: 'blur(5px)',
-    zIndex: 10,
-});
-
 const App = () => {
     const [isHovered, setIsHovered] = useState(false);
+
+    const createSpinningText = () => {
+        const text = "PRÓXIMAMENTE • SOON • ";
+        return (
+            <SpinningTextContainer>
+                <RotatingCircle>
+                    <svg viewBox="0 0 300 300" width="300" height="300">
+                        <defs>
+                            <path
+                                id="circle"
+                                d="M 150,150 m -100,0 a 100,100 0 1,1 200,0 a 100,100 0 1,1 -200,0"
+                            />
+                        </defs>
+                        <text
+                            style={{
+                                fontSize: '24px',
+                                letterSpacing: '2px',
+                                fontFamily: 'Segoe UI, sans-serif',
+                                fontWeight: '500'
+                            }}
+                        >
+                            <textPath href="#circle" startOffset="0%">
+                                {text}
+                            </textPath>
+                        </text>
+                    </svg>
+                </RotatingCircle>
+                <AISymbol>AI</AISymbol>
+            </SpinningTextContainer>
+        );
+    };
 
     return (
         <ThemeProvider theme={theme}>
@@ -160,8 +233,7 @@ const App = () => {
                     {isHovered && (
                         <LoadingOverlay>
                             <Box sx={{ textAlign: 'center' }}>
-                                <CircularProgress sx={{ mb: 2 }} />
-                                <Typography variant="h6">Próximamente...</Typography>
+                                {createSpinningText()}
                             </Box>
                         </LoadingOverlay>
                     )}
