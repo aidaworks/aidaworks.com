@@ -7,8 +7,7 @@ import {
     Box,
     ThemeProvider,
     createTheme,
-    responsiveFontSizes,
-    CircularProgress
+    responsiveFontSizes
 } from '@mui/material';
 import { styled, keyframes } from '@mui/material/styles';
 
@@ -36,6 +35,11 @@ const twinkle = keyframes`
 const spin = keyframes`
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+`;
+
+const fadeIn = keyframes`
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
 `;
 
 // Theme
@@ -150,6 +154,17 @@ const AISymbol = styled(Typography)({
     zIndex: 2,
     userSelect: 'none',
     pointerEvents: 'none',
+    display: 'flex',
+    gap: '2px',
+    '& .ai': {
+        animation: `${fadeIn} 1.5s ease-in-out`,
+    },
+    '& .da': {
+        animation: `${fadeIn} 1.5s ease-in-out`,
+        animationDelay: '0.8s',
+        opacity: 0,
+        animationFillMode: 'forwards',
+    }
 });
 
 const ContentWrapper = styled(Box)({
@@ -209,7 +224,10 @@ const App = () => {
                         </text>
                     </svg>
                 </RotatingCircle>
-                <AISymbol>AI</AISymbol>
+                <AISymbol>
+                    <span className="ai">AI</span>
+                    <span className="da">DA</span>
+                </AISymbol>
             </SpinningTextContainer>
         );
     };
@@ -244,12 +262,21 @@ const App = () => {
                                 sx={{
                                     p: 2,
                                     backgroundColor: 'transparent',
+                                    width: '200px',
+                                    height: '200px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
                                 }}
                             >
                                 <img
                                     src="img/AIDAWORKS_1.png"
                                     alt="AIDAWORKS Logo"
-                                    className="w-40 h-40 object-contain"
+                                    style={{
+                                        width: '100%',
+                                        height: '100%',
+                                        objectFit: 'contain'
+                                    }}
                                 />
                             </Paper>
                         </Box>
